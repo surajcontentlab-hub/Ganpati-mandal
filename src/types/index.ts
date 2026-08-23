@@ -86,7 +86,7 @@ export interface Mandal {
     branch: string;
   };
   paymentSettings?: {
-    upiId: string;
+    upiId?: string;
     paymentName?: string;
     razorpayKeyId?: string;
     qrCodeUrl?: string;
