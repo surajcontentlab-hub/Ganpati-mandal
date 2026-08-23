@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import { PageHeader, StatCard, SearchBar, Button, Badge, Modal, Input, Select, Table, EmptyState } from '@/components/ui';
 import { mockDonations, mockMandal } from '@/lib/mockData';
+import { supabase } from '@/lib/supabase';
 import type { Donation } from '@/types';
 import QRCode from 'qrcode';
 
@@ -12,8 +13,34 @@ const purposeLabels: Record<string, string> = {
 };
 
 export default function DonationsPage() {
-  const [donations, setDonations] = useState<Donation[]>(mockDonations);
+  const [donations, setDonations] = useState<Donation[]>([]);
   const [search, setSearch] = useState('');
+
+  useEffect(() => {
+    fetchDonations();
+  }, []);
+
+  const fetchDonations = async () => {
+    const { data, error } = await supabase.from('donations').select('*').order('created_at', { ascending: false });
+    if (data && data.length > 0) {
+      const formatted = data.map(d => ({
+        id: d.id,
+        mandalId: d.mandal_id,
+        receiptNumber: d.receipt_number,
+        donorName: d.donor_name,
+        donorMobile: d.donor_mobile,
+        amount: d.amount,
+        purpose: d.purpose,
+        paymentMethod: d.payment_method,
+        paymentStatus: d.payment_status,
+        createdAt: d.created_at,
+        isAnonymous: false,
+      }));
+      setDonations(formatted);
+    } else {
+      setDonations(mockDonations); // fallback to mock if db is empty
+    }
+  };
   
   // Modal State
   const [showModal, setShowModal] = useState(false);
@@ -73,11 +100,12 @@ export default function DonationsPage() {
     }
   };
 
-  const processPayment = (status: 'success' | 'failed' | 'pending') => {
+  const processPayment = async (status: 'success' | 'failed' | 'pending') => {
+    const receiptNum = `RCP-2026-${String(donations.length + 1).padStart(3, '0')}`;
     const newDonation: Donation = {
       id: `d${Date.now()}`, 
       mandalId: 'mandal_001',
-      receiptNumber: `RCP-2026-${String(donations.length + 1).padStart(3, '0')}`,
+      receiptNumber: receiptNum,
       donorName: form.donorName,
       donorMobile: form.donorMobile,
       amount: parseInt(form.amount) || 0,
@@ -92,6 +120,18 @@ export default function DonationsPage() {
       setDonations(prev => [newDonation, ...prev]);
       setCurrentDonation(newDonation);
       setStep('receipt');
+      
+      // Save to Supabase Live Database
+      await supabase.from('donations').insert({
+        receipt_number: receiptNum,
+        donor_name: form.donorName,
+        donor_mobile: form.donorMobile,
+        amount: newDonation.amount,
+        purpose: newDonation.purpose,
+        payment_method: newDonation.paymentMethod,
+        payment_status: newDonation.paymentStatus
+      });
+      fetchDonations();
     } else if (status === 'failed') {
       alert('Payment marked as failed.');
       setShowModal(false);
