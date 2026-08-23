@@ -40,7 +40,7 @@ const defaultUser: AppUser = {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<AppUser | null>(defaultUser);
+  const [user, setUser] = useState<AppUser | null>(null);
   const [language, setLanguage] = useState<Language>('mr');
   const [activeModule, setActiveModule] = useState('home');
   const [sidebarOpen, setSidebarOpen] = useState(false);

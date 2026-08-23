@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { mockMandal } from '@/lib/mockData';
+import { useApp } from '@/context/AppContext';
+import { Button, Input } from '@/components/ui';
 
 const navItems = [
   { href: '/admin', label: 'Dashboard', labelMr: 'डॅशबोर्ड', icon: '📊', exact: true },
@@ -23,7 +25,74 @@ const navItems = [
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { user, login } = useApp();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [mobile, setMobile] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (mobile === '9876543210' && password === 'admin123') {
+      login({
+        id: 'user_001',
+        name: 'Rajesh Deshmukh',
+        mobile: '9876543210',
+        email: 'rajesh@email.com',
+        role: 'mandal_admin',
+        mandalId: 'mandal_001',
+        language: 'mr',
+        isLoggedIn: true,
+      });
+      setError('');
+    } else {
+      setError('Invalid mobile number or password');
+    }
+  };
+
+  if (!user || user.role !== 'mandal_admin') {
+    return (
+      <div className="min-h-screen bg-stone-50 flex items-center justify-center p-4">
+        <div className="bg-white p-8 rounded-3xl shadow-xl w-full max-w-sm border border-amber-100">
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-3xl shadow-lg mb-4">
+              🙏
+            </div>
+            <h1 className="text-2xl font-bold text-stone-900">Admin Login</h1>
+            <p className="text-stone-500 text-sm">GanpatiMitra Dashboard</p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-4">
+            {error && <div className="p-3 bg-red-50 text-red-600 rounded-xl text-sm font-semibold text-center">{error}</div>}
+            
+            <Input 
+              label="Mobile Number" 
+              placeholder="9876543210" 
+              value={mobile} 
+              onChange={e => setMobile(e.target.value)} 
+              required 
+            />
+            <Input 
+              label="Password" 
+              type="password"
+              placeholder="admin123" 
+              value={password} 
+              onChange={e => setPassword(e.target.value)} 
+              required 
+            />
+
+            <Button className="w-full mt-2" type="submit">Login to Dashboard</Button>
+          </form>
+
+          <div className="mt-6 text-center">
+            <Link href="/" className="text-sm text-orange-600 font-medium hover:underline">
+              ← Back to Public Site
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const isActive = (href: string, exact?: boolean) =>
     exact ? pathname === href : pathname.startsWith(href);
