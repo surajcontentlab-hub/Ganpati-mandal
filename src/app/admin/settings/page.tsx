@@ -117,10 +117,70 @@ export default function SettingsPage() {
           {activeTab === 'payment' && (
             <div className="bg-white rounded-2xl border border-amber-100 p-5 space-y-4">
               <h3 className="font-bold text-stone-900 border-b border-amber-100 pb-3">💳 Payment Settings</h3>
-              <Input label="UPI ID" placeholder="mandal@upi" value={mandal.paymentSettings?.upiId || ''} onChange={e => setMandal({...mandal, paymentSettings: {...mandal.paymentSettings, upiId: e.target.value}})} />
-              <Input label="Payment Name" placeholder="Mandal Name for UPI" value={mandal.paymentSettings?.paymentName || ''} onChange={e => setMandal({...mandal, paymentSettings: {...mandal.paymentSettings, paymentName: e.target.value}})} />
-              <Input label="QR Code URL (Image Link)" placeholder="https://..." value={mandal.paymentSettings?.qrCodeUrl || ''} onChange={e => setMandal({...mandal, paymentSettings: {...mandal.paymentSettings, qrCodeUrl: e.target.value}})} />
-              <Input label="Razorpay Key ID" placeholder="rzp_live_..." value={mandal.paymentSettings?.razorpayKeyId || ''} onChange={e => setMandal({...mandal, paymentSettings: {...mandal.paymentSettings, razorpayKeyId: e.target.value}})} />
+              <Input
+                label="UPI ID"
+                placeholder="mandal@upi"
+                value={mandal.paymentSettings?.upiId || ''}
+                onChange={e =>
+                  setMandal({
+                    ...mandal,
+                    paymentSettings: {
+                      upiId: e.target.value,
+                      paymentName: mandal.paymentSettings?.paymentName,
+                      razorpayKeyId: mandal.paymentSettings?.razorpayKeyId,
+                      qrCodeUrl: mandal.paymentSettings?.qrCodeUrl,
+                    },
+                  })
+                }
+              />
+              <Input
+                label="Payment Name"
+                placeholder="Mandal Name for UPI"
+                value={mandal.paymentSettings?.paymentName || ''}
+                onChange={e =>
+                  setMandal({
+                    ...mandal,
+                    paymentSettings: {
+                      upiId: mandal.paymentSettings?.upiId,
+                      paymentName: e.target.value,
+                      razorpayKeyId: mandal.paymentSettings?.razorpayKeyId,
+                      qrCodeUrl: mandal.paymentSettings?.qrCodeUrl,
+                    },
+                  })
+                }
+              />
+              <Input
+                label="QR Code URL (Image Link)"
+                placeholder="https://..."
+                value={mandal.paymentSettings?.qrCodeUrl || ''}
+                onChange={e =>
+                  setMandal({
+                    ...mandal,
+                    paymentSettings: {
+                      upiId: mandal.paymentSettings?.upiId,
+                      paymentName: mandal.paymentSettings?.paymentName,
+                      razorpayKeyId: mandal.paymentSettings?.razorpayKeyId,
+                      qrCodeUrl: e.target.value,
+                    },
+                  })
+                }
+              />
+              <Input
+                label="Razorpay Key ID"
+                placeholder="rzp_live_..."
+                value={mandal.paymentSettings?.razorpayKeyId || ''}
+                onChange={e =>
+                  setMandal({
+                    ...mandal,
+                    paymentSettings: {
+                      upiId: mandal.paymentSettings?.upiId,
+                      paymentName: mandal.paymentSettings?.paymentName,
+                      razorpayKeyId: e.target.value,
+                      qrCodeUrl: mandal.paymentSettings?.qrCodeUrl,
+                    },
+                  })
+                }
+              />
               <div className="bg-amber-50 border border-amber-100 rounded-xl p-4">
                 <p className="text-xs font-bold text-amber-700 mb-1">⚠️ Security Note</p>
                 <p className="text-xs text-amber-600">Never share your payment gateway secret keys. Only use the publishable/public keys here.</p>
