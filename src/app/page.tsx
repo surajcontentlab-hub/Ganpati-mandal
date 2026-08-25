@@ -45,13 +45,13 @@ export default function HomePage() {
         <div className="relative px-4 pt-6 pb-8 text-center">
           {/* Mandal Name */}
           <div className="inline-flex items-center gap-2 bg-orange-500/20 border border-orange-500/30 rounded-full px-4 py-1.5 mb-4">
-            <span className="text-orange-400 text-xs font-semibold">🏆 Pune's Beloved Mandal Since 1985</span>
+            <span className="text-orange-400 text-xs font-semibold">🏆 Mumbai's Beloved Ganesh Ustav Mandal Since 2015</span>
           </div>
 
           <h1 className="text-3xl font-bold text-white mb-1 font-devanagari">
             जय श्री गणेशा 🙏
           </h1>
-          <p className="text-orange-300 text-sm font-devanagari mb-4">शिवाजी नगर गणपती मंडळ • Ganesh Festival 2026</p>
+          <p className="text-orange-300 text-sm font-devanagari mb-4">शिव प्रेमी मित्र मंडळ • Ganesh Ustav 2026</p>
 
           {/* Ganpati Icon */}
           <div className="relative w-36 h-36 mx-auto mb-5">
@@ -72,7 +72,7 @@ export default function HomePage() {
               <span className="text-5xl font-black text-white">{daysLeft}</span>
               <span className="text-orange-300 text-sm">दिवस</span>
             </div>
-            <p className="text-amber-300 text-xs mt-1">27 August 2026</p>
+            <p className="text-amber-300 text-xs mt-1">14 September 2026</p>
           </div>
 
           {/* Crowd Status */}
