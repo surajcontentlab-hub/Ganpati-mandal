@@ -16,7 +16,7 @@ export default function DonatePage() {
   const [customAmount, setCustomAmount] = useState('');
   const [purpose, setPurpose] = useState('general');
   const [form, setForm] = useState({ name: '', mobile: '', email: '', anonymous: false });
-  const [step, setStep] = useState<'form' | 'payment' | 'success'>('form');
+  const [step, setStep] = useState<'form' | 'payment' | 'qr' | 'success'>('form');
   const [activeTab, setActiveTab] = useState<'donate' | 'transparency'>('donate');
 
   const totalAmount = selectedAmount || parseInt(customAmount) || 0;
@@ -27,8 +27,24 @@ export default function DonatePage() {
     if (totalAmount > 0) setStep('payment');
   };
 
-  const handlePayment = () => {
+  const handlePayment = (method: string) => {
     setStep('success');
+    
+    // Construct WhatsApp message
+    const donorName = form.anonymous ? 'देणगीदार (Anonymous)' : (form.name || 'देणगीदार');
+    const amount = totalAmount;
+    
+    const message = `नमस्कार ${donorName} 🙏\n\nगणपती मंडळासाठी आपण दिलेल्या ₹${amount} देणगीबद्दल मनःपूर्वक धन्यवाद! (पेमेंट: ${method})\n\nगणपती बाप्पा मोरया! 🌺`;
+    
+    // Clean mobile number and add country code if needed
+    let mobile = form.mobile.replace(/\D/g, '');
+    if (mobile.length === 10) {
+      mobile = '91' + mobile;
+    }
+    
+    const whatsappUrl = `https://wa.me/${mobile}?text=${encodeURIComponent(message)}`;
+    
+    window.open(whatsappUrl, '_blank');
   };
 
   return (
@@ -130,32 +146,45 @@ export default function DonatePage() {
               <h3 className="font-bold text-stone-800 font-devanagari">पेमेंट पद्धत निवडा</h3>
 
               <div className="space-y-3">
-                <button onClick={handlePayment} className="w-full flex items-center gap-3 bg-white border-2 border-amber-200 hover:border-orange-400 rounded-xl p-4 transition-all">
-                  <span className="text-2xl">📱</span>
-                  <div className="text-left">
-                    <p className="font-bold text-stone-800">UPI Payment</p>
-                    <p className="text-xs text-stone-400">{mockMandal.paymentSettings?.upiId}</p>
-                  </div>
-                  <span className="ml-auto text-orange-500">→</span>
-                </button>
-                <button onClick={handlePayment} className="w-full flex items-center gap-3 bg-white border-2 border-amber-200 hover:border-orange-400 rounded-xl p-4 transition-all">
-                  <span className="text-2xl">📷</span>
-                  <div className="text-left">
-                    <p className="font-bold text-stone-800">QR Code Scan</p>
-                    <p className="text-xs text-stone-400">Scan and pay</p>
-                  </div>
-                  <span className="ml-auto text-orange-500">→</span>
-                </button>
-                <button onClick={handlePayment} className="w-full flex items-center gap-3 bg-white border-2 border-amber-200 hover:border-orange-400 rounded-xl p-4 transition-all">
+                <button onClick={() => setStep('qr')} className="w-full flex items-center gap-3 bg-white border-2 border-amber-200 hover:border-orange-400 rounded-xl p-4 transition-all">
                   <span className="text-2xl">💳</span>
                   <div className="text-left">
                     <p className="font-bold text-stone-800">Online Payment</p>
-                    <p className="text-xs text-stone-400">Card / Net Banking / Wallet</p>
+                    <p className="text-xs text-stone-400">Card / UPI / Net Banking</p>
+                  </div>
+                  <span className="ml-auto text-orange-500">→</span>
+                </button>
+                <button onClick={() => handlePayment('Cash')} className="w-full flex items-center gap-3 bg-white border-2 border-amber-200 hover:border-orange-400 rounded-xl p-4 transition-all">
+                  <span className="text-2xl">💵</span>
+                  <div className="text-left">
+                    <p className="font-bold text-stone-800">Cash Payment</p>
+                    <p className="text-xs text-stone-400">Pay in cash at mandal</p>
                   </div>
                   <span className="ml-auto text-orange-500">→</span>
                 </button>
               </div>
               <button onClick={() => setStep('form')} className="w-full text-center text-sm text-stone-400 hover:text-stone-600 mt-2">← Back</button>
+            </div>
+          )}
+
+          {step === 'qr' && (
+            <div className="space-y-4 text-center">
+              <h3 className="font-bold text-stone-800 font-devanagari">स्कॅन करून पेमेंट करा</h3>
+              <p className="text-stone-500 text-sm">Please scan the QR code to pay</p>
+              <div className="bg-white p-4 rounded-xl border border-amber-200 inline-block">
+                <img 
+                  src="/payment-qr.png.png" 
+                  alt="Payment QR Code" 
+                  className="w-48 h-48 object-contain rounded-lg mx-auto" 
+                />
+              </div>
+              <p className="text-3xl font-black mt-2">₹{totalAmount.toLocaleString('en-IN')}</p>
+              <p className="text-sm font-bold text-orange-600 mb-4">{mockMandal.paymentSettings?.upiId}</p>
+              
+              <Button onClick={() => handlePayment('Online')} className="w-full" size="lg">
+                ✅ पेमेंट केले (I have paid)
+              </Button>
+              <button onClick={() => setStep('payment')} className="w-full text-center text-sm text-stone-400 hover:text-stone-600 mt-2">← Back</button>
             </div>
           )}
 
