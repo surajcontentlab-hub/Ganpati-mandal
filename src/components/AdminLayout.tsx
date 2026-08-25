@@ -9,6 +9,7 @@ import { Button, Input } from '@/components/ui';
 
 const navItems = [
   { href: '/admin', label: 'Dashboard', labelMr: 'डॅशबोर्ड', icon: '📊', exact: true },
+  { href: '/admin/users', label: 'User Approvals', labelMr: 'वापरकर्ता मंजुरी', icon: '👤' },
   { href: '/admin/members', label: 'Members', labelMr: 'सभासद', icon: '👥' },
   { href: '/admin/volunteers', label: 'Volunteers', labelMr: 'स्वयंसेवक', icon: '🤝' },
   { href: '/admin/donations', label: 'Donations', labelMr: 'देणग्या', icon: '💰' },
@@ -33,12 +34,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (mobile === '9876543210' && password === 'admin123') {
+    if (mobile === '9657798459' && password === 'Survase@321') {
       login({
-        id: 'user_001',
-        name: 'Rajesh Deshmukh',
-        mobile: '9876543210',
-        email: 'rajesh@email.com',
+        id: 'admin_1',
+        name: 'Suraj Survase',
+        mobile: '9657798459',
+        email: 'admin@ganpatimitra.com',
         role: 'mandal_admin',
         mandalId: 'mandal_001',
         language: 'mr',

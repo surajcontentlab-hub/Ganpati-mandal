@@ -6,11 +6,19 @@ export const metadata: Metadata = {
   title: "GanpatiMitra - आपल्या मंडळाचा डिजिटल साथीदार",
   description: "Connect. Manage. Celebrate. The complete digital management platform for Ganpati Mandals. Manage donations, events, volunteers, members, and more.",
   keywords: "Ganpati Mandal, Ganesh Festival, Mandal Management, Digital Darshan, Online Donation",
+  manifest: "/manifest.json",
   openGraph: {
     title: "GanpatiMitra",
     description: "आपल्या मंडळाचा डिजिटल साथीदार | Digital Management Platform for Ganpati Mandals",
     type: "website",
   },
+};
+
+export const viewport = {
+  themeColor: "#f97316",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({
