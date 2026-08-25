@@ -112,7 +112,7 @@ export default function UsersManagementPage() {
                     <td className="py-3 font-medium text-stone-900">{user.name}</td>
                     <td className="py-3 text-stone-600">{user.mobile}</td>
                     <td className="py-3">
-                      <Badge variant={user.is_verified ? 'green' : 'orange'}>
+                      <Badge variant={user.is_verified ? 'green' : 'saffron'}>
                         {user.is_verified ? 'Verified' : 'Pending'}
                       </Badge>
                     </td>

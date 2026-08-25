@@ -79,13 +79,13 @@ export const mockDashboardStats = {
 // ==============================
 // CHART DATA (EMPTY)
 // ==============================
-export const donationChartData = [];
-export const expenseChartData = [];
+export const donationChartData: any[] = [];
+export const expenseChartData: any[] = [];
 
 // ==============================
 // TODAY'S PROGRAM
 // ==============================
-export const todayProgram = [];
+export const todayProgram: any[] = [];
 
 // ==============================
 // AARTI LYRICS
