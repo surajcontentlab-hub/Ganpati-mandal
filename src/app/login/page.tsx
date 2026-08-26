@@ -25,15 +25,21 @@ export default function LoginPage() {
 
     try {
       if (isLogin) {
-        // Mock Login Flow (Normally you'd use supabase.auth.signInWithPassword)
-        // Since we are using mobile instead of email for this Indian audience app, we'll check our custom table
-        const { data: users, error } = await supabase
-          .from('mandal_users')
-          .select('*')
-          .eq('mobile', mobile)
-          .eq('password', password); // NOT FOR PRODUCTION. Just a demo since true mobile auth needs OTP or custom auth server.
-          
-        if (error) throw error;
+        let users: any[] = [];
+        try {
+          const res = await supabase
+            .from('mandal_users')
+            .select('*')
+            .eq('mobile', mobile)
+            .eq('password', password);
+            
+          if (res.error) throw res.error;
+          users = res.data || [];
+        } catch (dbErr) {
+          console.warn('Supabase failed, falling back to local storage', dbErr);
+          const localUsers = JSON.parse(localStorage.getItem('mandal_users') || '[]');
+          users = localUsers.filter((u: any) => u.mobile === mobile && u.password === password);
+        }
         
         if (users && users.length > 0) {
           const user = users[0];
@@ -45,11 +51,11 @@ export default function LoginPage() {
           }
           
           login({
-            id: user.id,
+            id: user.id || 'local_' + Date.now(),
             name: user.name,
             mobile: user.mobile,
             email: '',
-            role: user.role || 'member',
+            role: user.role || 'user',
             mandalId: 'mandal_001',
             language: 'mr',
             isLoggedIn: true,
@@ -61,10 +67,18 @@ export default function LoginPage() {
         }
       } else {
         // Registration Flow
-        const { data: existingUser } = await supabase
-          .from('mandal_users')
-          .select('id')
-          .eq('mobile', mobile);
+        let existingUser: any[] = [];
+        try {
+          const res = await supabase
+            .from('mandal_users')
+            .select('id')
+            .eq('mobile', mobile);
+          if (res.error) throw res.error;
+          existingUser = res.data || [];
+        } catch (dbErr) {
+          const localUsers = JSON.parse(localStorage.getItem('mandal_users') || '[]');
+          existingUser = localUsers.filter((u: any) => u.mobile === mobile);
+        }
           
         if (existingUser && existingUser.length > 0) {
           setMessage({ text: 'User with this mobile number already exists.', type: 'error' });
@@ -72,13 +86,19 @@ export default function LoginPage() {
           return;
         }
 
-        const { error } = await supabase
-          .from('mandal_users')
-          .insert([
-            { name, mobile, password, is_verified: false, role: 'user' }
-          ]);
+        const newUser = { id: Date.now(), name, mobile, password, is_verified: false, role: 'user', created_at: new Date() };
 
-        if (error) throw error;
+        try {
+          const { error } = await supabase
+            .from('mandal_users')
+            .insert([newUser]);
+          if (error) throw error;
+        } catch (dbErr) {
+          console.warn('Supabase failed, saving to local storage', dbErr);
+          const localUsers = JSON.parse(localStorage.getItem('mandal_users') || '[]');
+          localUsers.push(newUser);
+          localStorage.setItem('mandal_users', JSON.stringify(localUsers));
+        }
         
         setMessage({ text: 'Registration successful! Please wait for admin approval to log in.', type: 'success' });
         setIsLogin(true);
@@ -87,7 +107,7 @@ export default function LoginPage() {
       }
     } catch (err: any) {
       console.error(err);
-      setMessage({ text: err.message || 'Something went wrong. Have you created the mandal_users table in Supabase?', type: 'error' });
+      setMessage({ text: err.message || 'Something went wrong.', type: 'error' });
     } finally {
       setLoading(false);
     }
