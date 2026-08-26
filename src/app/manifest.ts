@@ -12,13 +12,13 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: '#f97316',
     icons: [
       {
-        src: '/icon?size=192x192',
+        src: '/icon-192.png',
         sizes: '192x192',
         type: 'image/png',
         purpose: 'any'
       },
       {
-        src: '/icon?size=512x512',
+        src: '/icon-512.png',
         sizes: '512x512',
         type: 'image/png',
         purpose: 'maskable'
@@ -26,7 +26,13 @@ export default function manifest(): MetadataRoute.Manifest {
     ],
     screenshots: [
       {
-        src: '/icon?size=512x512',
+        src: '/screenshot.png',
+        sizes: '1280x720',
+        type: 'image/png',
+        form_factor: 'wide'
+      },
+      {
+        src: '/icon-512.png',
         sizes: '512x512',
         type: 'image/png',
         form_factor: 'narrow'
